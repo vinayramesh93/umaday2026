@@ -66,9 +66,24 @@
     <div class="message" id="message"></div>
   </div>
 
-  <script>
-    function checkAnswer() {
-      const input = document.getElementById("answer").value.trim().toLowerCase();
-      const message = document.getElementById("message");
+<script>
+  function checkAnswer() {
+    const input = document.getElementById("answer").value.trim().toLowerCase();
+    const message = document.getElementById("message");
 
-      con
+    const validAnswers = ["amber", "amber india"];
+
+    if (validAnswers.includes(input)) {
+      message.textContent = "Identity confirmed - Rendezvous at Amber India at 1:00pm.";
+    } else {
+      message.textContent = "Wrong password. Try again.";
+    }
+  }
+
+  // optional: allow pressing Enter to submit
+  document.getElementById("answer").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") checkAnswer();
+  });
+</script>
+</body>
+</html>
