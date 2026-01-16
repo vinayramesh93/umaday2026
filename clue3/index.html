@@ -21,69 +21,101 @@
     .container {
       text-align: center;
       width: 90%;
-      max-width: 500px;
+      max-width: 560px;
     }
 
     h1 {
-      font-size: 1.4rem;
-      margin-bottom: 20px;
-      font-weight: normal;
+      font-size: 1.6rem;
+      margin: 0 0 24px 0;
+      font-weight: 600;
+      line-height: 1.25;
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      margin-bottom: 15px;
+      padding: 14px 12px;
+      font-size: 1.05rem;
+      margin-bottom: 14px;
       border: none;
       outline: none;
       box-sizing: border-box;
+      border-radius: 2px;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      font-size: 1rem;
+      padding: 14px 12px;
+      font-size: 1.05rem;
       background: white;
       color: black;
       border: none;
       cursor: pointer;
+      border-radius: 2px;
     }
 
     .message {
-      margin-top: 20px;
-      font-size: 1rem;
+      margin-top: 18px;
+      font-size: 1.05rem;
+      min-height: 1.4em;
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>Where did we go for dinner the day you broke your favorite Microsoft mug?</h1>
 
-    <input type="text" id="answer" placeholder="Enter answer" />
-    <button onclick="checkAnswer()">Submit</button>
+    <input type="text" id="answer" placeholder="Enter answer" autocomplete="off" />
+    <button id="submitBtn">Submit</button>
 
     <div class="message" id="message"></div>
   </div>
 
-<script>
-  function checkAnswer() {
-    const input = document.getElementById("answer").value.trim().toLowerCase();
-    const message = document.getElementById("message");
+  <script>
+    function normalizeInput(raw) {
+      // lowercase, trim, remove punctuation, collapse spaces
+      const normalized = (raw || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s]/g, "")   // remove punctuation (commas, hyphens, etc.)
+        .replace(/\s+/g, " ");     // collapse multiple spaces
 
-    const validAnswers = ["amber", "amber india"];
-
-    if (validAnswers.includes(input)) {
-      message.textContent = "Identity confirmed - Rendezvous at Amber India at 1:00pm.";
-    } else {
-      message.textContent = "Wrong password. Try again.";
+      const compact = normalized.replace(/\s/g, ""); // remove all spaces
+      return { normalized, compact };
     }
-  }
 
-  // optional: allow pressing Enter to submit
-  document.getElementById("answer").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") checkAnswer();
-  });
-</script>
+    function isCorrectAnswer(raw) {
+      const { normalized, compact } = normalizeInput(raw);
+
+      // Accept all common variations:
+      // amber
+      // amber india
+      // amberindia
+      if (normalized === "amber") return true;
+      if (normalized === "amber india") return true;
+      if (compact === "amberindia") return true;
+
+      return false;
+    }
+
+    function checkAnswer() {
+      const inputEl = document.getElementById("answer");
+      const messageEl = document.getElementById("message");
+
+      if (isCorrectAnswer(inputEl.value)) {
+        messageEl.textContent = "Identity confirmed - Rendezvous at Amber India at 1:00pm.";
+      } else {
+        messageEl.textContent = "Wrong password, try again";
+      }
+    }
+
+    // Button click
+    document.getElementById("submitBtn").addEventListener("click", checkAnswer);
+
+    // Press Enter to submit
+    document.getElementById("answer").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") checkAnswer();
+    });
+  </script>
 </body>
 </html>
